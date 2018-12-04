@@ -51,7 +51,7 @@ z = v(:,3);
 scatter(v(:,2),v(:,2));
 scatter(v(:,1),v(:,1));
 scatter(v(:,3),v(:,3));
-p = prctile(v(:,3),10);
+p = prctile(v(:,3),95);
 figure;
 hold on;
 scatter(z,z);
@@ -61,5 +61,5 @@ pz = z>p;
 rem = z>1;
 rem2 = v(:,1)>v(:,2);
 tpz = t.*pz;
-
+scatter(v(:,1),v(:,2));
 %SPROBUMY ODFILTROWAC

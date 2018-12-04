@@ -12,19 +12,20 @@ function fft_cell = power_in_band2(sleep_cell,tw,freq,band)
             b = j*n;
             y = [];
             if b < size(x,2)
-                y = fft(x(a:b));
+                y = fft(detrend(x(a:b)));
                 M(j,3) = t(b);
             else
-                y = fft(x(a:end));
+                y = fft(detrend(x(a:end)));
                 M(j,3) = t(end);
             end
             %length(y)
             y = 2.*y./n;
             y = (abs(y)).^2;
             y2 = y(1:round(length(y)/2));
-            range = band(1):band(2);
-            range = range.*df;
-            range = ceil(range);
+            n1 = band(1)/df;
+            n2 = band(2)/df;
+            range = n1:n2;
+            %range = ceil(range);
             M(j,1) = sum(y2(range));
             M(j,2) = t(a);
     

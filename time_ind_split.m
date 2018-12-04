@@ -4,6 +4,9 @@ function M = time_ind_split(x,time_ind,freq)
     %maxdim = max(diff(ind,1,2));
     M = cell(size(ind,1),2);
     for i = 1:size(ind,1)
+        if ind(i,1) == 0
+            ind(i,1) = 1;
+        end
         window = int32(ind(i,1)):int32(ind(i,2));
         %window
         %window

@@ -26,8 +26,12 @@ for i = 1:length(folder1)
     x = 1;
     sig = decimate(ad,x);
     newfreq = adfreq/x;
-    sig = bandpass(sig,[100 250],newfreq);
+    %sig = bandpass(sig,[100 250],newfreq);
     %ind
+    stop_att = 40;
+    [z,p,k] = cheby2(4,stop_att,[100/500 250/500],'bandpass');
+    [sos,g] = zp2sos(z,p,k);
+    sig = filtfilt(sos,g,sig);
     sig = abs(hilbert(sig));
     sigsplit = time_ind_split(sig,ind.*1/newfreq,newfreq);
     totalsws = [];
@@ -36,7 +40,7 @@ for i = 1:length(folder1)
     end
     sd = std(totalsws);
     sdmap(folder1(i).name) = sd;
-    filename
+    %filename
 end
 %save('sdmap.mat','sdmap');
 
@@ -62,17 +66,24 @@ for i = 1:length(folder1)
         x = 1;
         sig = decimate(ad,x);
         newfreq = adfreq/x;
-        sig = bandpass(sig,[100 250],newfreq);
+        %sig = bandpass(sig,[100 250],newfreq);
+        stop_att = 40;
+        [zz,pp,kk] = cheby2(4,stop_att,[100/500 250/500],'bandpass');
+        [sos,gg] = zp2sos(zz,pp,kk);
+        sig = filtfilt(sos,gg,sig);
         txt = [erase(folder2(j).name,'.pl2') '.txt'];
         stages = importdata([stagespath1 txt]);
         %stages
         if isempty(stages) == 1
-            ind = [0 0];
+            ind = [1 1];
         else
             ind = stages.data;
         end 
+        if ind(1,1)==0
+            ind(1,1)=1;
+        end
         [ripples, env_std, env_mean, durs, instantaneous_freqs, absolute_peaks, ...
-        norm_peaks, absolute_energy, full_durs] = detect_ripples(sig,newfreq,sdmap(folder1(i).name),ind,[],-1);
+        norm_peaks, absolute_energy, full_durs] = detect_ripples(sig,newfreq,sdmap(folder1(i).name),ind,[],1);
         time_ind = ind.*1/newfreq;
         sleep_dur = diff(time_ind,1,2);
         sleep_dur = sum(sleep_dur);
